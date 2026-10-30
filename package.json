@@ -1,0 +1,30 @@
+{
+  "name": "mood-bloom",
+  "version": "1.0.0",
+  "description": "Mind Bloom — Student Mental Wellness & Mood Tracking MVP",
+  "main": "server.js",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "node tests/api.test.js",
+    "migrate": "node -e \"require('./lib/db').runMigrations().then(() => process.exit(0)).catch(e => { console.error(e.message); process.exit(1); })\""
+  },
+  "keywords": [
+    "mental-health",
+    "mood-tracker",
+    "journal",
+    "ai-chat",
+    "emergency-support",
+    "college-project"
+  ],
+  "author": "Mind Bloom Team",
+  "license": "MIT",
+  "dependencies": {
+    "@neondatabase/serverless": "^1.2.0",
+    "dotenv": "^16.6.1",
+    "express": "^5.3.0"
+  }
+}

@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mind Bloom — Student Mental Wellness & Mood Tracker</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar" id="appNavbar" style="display: none;">
+    <div class="nav-container">
+      <a class="brand" onclick="navigateTo('dashboard')">
+        <div class="brand-icon">
+          <img src="/favicon.svg" alt="Mind Bloom" width="36" height="36" />
+        </div>
+        <div class="brand-text">
+          <h1>Mind Bloom</h1>
+          <p>Nurture your mind, one day at a time</p>
+        </div>
+      </a>
+
+      <ul class="nav-links">
+        <li class="nav-item" data-view="dashboard">
+          <button onclick="navigateTo('dashboard')">📊 Dashboard</button>
+        </li>
+        <li class="nav-item" data-view="mood">
+          <button onclick="navigateTo('mood')">🧠 Mood Log</button>
+        </li>
+        <li class="nav-item" data-view="journal">
+          <button onclick="navigateTo('journal')">📔 Journal</button>
+        </li>
+        <li class="nav-item" data-view="chat">
+          <button onclick="navigateTo('chat')">🤖 AI Friend</button>
+        </li>
+        <li class="nav-item nav-emergency" data-view="emergency">
+          <button onclick="navigateTo('emergency')">🚨 Emergency Help</button>
+        </li>
+      </ul>
+
+      <div class="nav-user">
+        <button class="layout-toggle-btn" onclick="toggleLayout()" id="layoutToggleBtn" title="Switch between mobile/desktop layout">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <span id="layoutToggleLabel">Desktop View</span>
+        </button>
+        <div class="user-badge" onclick="openProfileModal()" title="View Profile">
+          <div class="user-avatar" id="navAvatar">A</div>
+          <span id="navUserName">Alex</span>
+        </div>
+        <button class="btn-icon" onclick="logout()" title="Logout">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="main-content">
+
+    <!-- ========================================== -->
+    <!-- 1. AUTH VIEW (Login / Sign Up)             -->
+    <!-- ========================================== -->
+    <section id="view-auth" class="view-section active">
+      <div class="auth-container">
+        <div class="auth-header">
+          <div class="auth-logo">🌸</div>
+          <h2>Welcome to Mind Bloom</h2>
+          <p>Your gentle daily companion for emotional well-being</p>
+        </div>
+
+        <div class="card">
+          <!-- Quick Demo Account Banner for Viva / Quick Testing -->
+          <div class="demo-login-box">
+            <div>
+              <strong>College Demo Account:</strong>
+              <div style="font-size: 0.78rem;">demo@mindbloom.com (Alex Rivera)</div>
+            </div>
+            <button class="btn btn-sm btn-primary" onclick="fillDemoAccount()">One-Click Fill</button>
+          </div>
+
+          <div class="auth-tabs">
+            <button class="auth-tab-btn active" id="tabLoginBtn" onclick="switchAuthTab('login')">Sign In</button>
+            <button class="auth-tab-btn" id="tabSignupBtn" onclick="switchAuthTab('signup')">Sign Up</button>
+          </div>
+
+          <!-- Login Form -->
+          <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+              <label class="form-label">Email Address</label>
+              <input type="email" id="loginEmail" class="form-control" placeholder="name@college.edu" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Password</label>
+              <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required />
+            </div>
+            <button type="submit" class="btn btn-primary btn-block btn-lg" id="loginSubmitBtn">
+              Sign In to Mind Bloom
+            </button>
+          </form>
+
+          <!-- Signup Form -->
+          <form id="signupForm" style="display: none;" onsubmit="handleSignup(event)">
+            <div class="form-group">
+              <label class="form-label">Full Name</label>
+              <input type="text" id="signupName" class="form-control" placeholder="e.g. Alex Rivera" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email Address</label>
+              <input type="email" id="signupEmail" class="form-control" placeholder="alex@college.edu" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Password (Min. 6 chars)</label>
+              <input type="password" id="signupPassword" class="form-control" placeholder="••••••••" minlength="6" required />
+            </div>
+            <button type="submit" class="btn btn-primary btn-block btn-lg" id="signupSubmitBtn">
+              Create My Account
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 2. DASHBOARD VIEW                          -->
+    <!-- ========================================== -->
+    <section id="view-dashboard" class="view-section">
+      <!-- Hero Welcome Greeting -->
+      <div class="dashboard-hero">
+        <div class="greeting-text">
+          <h2 id="dashGreeting">Good Day, Alex 🌿</h2>
+          <p id="dashSubGreeting">Remember to take a breath. Every small step matters.</p>
+        </div>
+        <div style="display: flex; gap: 0.6rem;">
+          <button class="btn btn-primary" onclick="navigateTo('mood')">🧠 Log Mood</button>
+          <button class="btn btn-secondary" onclick="navigateTo('journal')">📔 Write Journal</button>
+        </div>
+      </div>
+
+      <!-- Quick Status & Metric Cards -->
+      <div class="quick-stats-grid">
+        <div class="card stat-card">
+          <div class="stat-icon" style="background-color: var(--accent-sunshine-light);">✨</div>
+          <div class="stat-info">
+            <div class="stat-value" id="statTodayMood">- / 5</div>
+            <div class="stat-label">Today's Mood</div>
+          </div>
+        </div>
+
+        <div class="card stat-card">
+          <div class="stat-icon" style="background-color: var(--primary-light);">📈</div>
+          <div class="stat-info">
+            <div class="stat-value" id="statWeekAvg">0.0</div>
+            <div class="stat-label">7-Day Mood Avg</div>
+          </div>
+        </div>
+
+        <div class="card stat-card">
+          <div class="stat-icon" style="background-color: var(--accent-blossom-light);">📔</div>
+          <div class="stat-info">
+            <div class="stat-value" id="statJournalCount">0</div>
+            <div class="stat-label">Journal Entries</div>
+          </div>
+        </div>
+
+        <div class="card stat-card">
+          <div class="stat-icon" style="background-color: var(--accent-lavender-light);">🌱</div>
+          <div class="stat-info">
+            <div class="stat-value" id="statMoodCount">0</div>
+            <div class="stat-label">Total Moods Logged</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Today's Mood Spotlight -->
+      <div class="today-mood-card">
+        <div class="today-mood-content">
+          <div class="today-mood-emoji" id="todayMoodEmoji">🤔</div>
+          <div class="today-mood-details">
+            <h4 id="todayMoodTitle">Today's Mood: Not logged yet</h4>
+            <p id="todayMoodNote">Take a 30-second pause to reflect on how you feel today.</p>
+          </div>
+        </div>
+        <button class="btn btn-sm btn-primary" id="btnLogToday" onclick="navigateTo('mood')">
+          Log Today's Mood
+        </button>
+      </div>
+
+      <!-- Main Dashboard Grid: 7-Day Graph & Recent Moods -->
+      <div class="dashboard-grid">
+        <!-- 7-Day Mood Trend Graph -->
+        <div class="card graph-card">
+          <div class="card-header-flex">
+            <h3>📈 Mood This Week</h3>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Scores (1 = Low to 5 = High)</span>
+          </div>
+          <div class="graph-container">
+            <canvas id="moodChart" class="graph-canvas"></canvas>
+          </div>
+        </div>
+
+        <!-- Recent Mood Logs History -->
+        <div class="card">
+          <div class="card-header-flex">
+            <h3>🕒 Recent Mood History</h3>
+            <button class="btn btn-sm btn-secondary" onclick="navigateTo('mood')">View All</button>
+          </div>
+          <div class="mood-history-list" id="recentMoodsList">
+            <p style="color: var(--text-muted); font-size: 0.85rem;">No mood entries recorded yet.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 3. DAILY MOOD TRACKING VIEW                -->
+    <!-- ========================================== -->
+    <section id="view-mood" class="view-section">
+      <div class="mood-tracking-container">
+        <div class="card">
+          <div style="text-align: center; margin-bottom: 1.5rem;">
+            <h2>🧠 How are you feeling today?</h2>
+            <p style="color: var(--text-muted);">Select your current mood and score. Tracking helps identify your emotional patterns.</p>
+          </div>
+
+          <!-- Mood Selector Grid (Happy, Okay, Sad, Angry, Anxious) -->
+          <div class="mood-selector-grid">
+            <div class="mood-option-card" data-mood="Happy" data-score="5" onclick="selectMood('Happy', 5, '😊')">
+              <span class="emoji">😊</span>
+              <span class="label">Happy</span>
+              <span class="score">5/5 Great</span>
+            </div>
+
+            <div class="mood-option-card" data-mood="Good" data-score="4" onclick="selectMood('Good', 4, '😌')">
+              <span class="emoji">😌</span>
+              <span class="label">Good</span>
+              <span class="score">4/5 Calm</span>
+            </div>
+
+            <div class="mood-option-card" data-mood="Okay" data-score="3" onclick="selectMood('Okay', 3, '😐')">
+              <span class="emoji">😐</span>
+              <span class="label">Okay</span>
+              <span class="score">3/5 Neutral</span>
+            </div>
+
+            <div class="mood-option-card" data-mood="Sad" data-score="2" onclick="selectMood('Sad', 2, '😔')">
+              <span class="emoji">😔</span>
+              <span class="label">Sad</span>
+              <span class="score">2/5 Down</span>
+            </div>
+
+            <div class="mood-option-card" data-mood="Anxious" data-score="1" onclick="selectMood('Anxious', 1, '😰')">
+              <span class="emoji">😰</span>
+              <span class="label">Anxious</span>
+              <span class="score">1/5 Stressed</span>
+            </div>
+          </div>
+
+          <div style="text-align: center; margin-bottom: 1rem;">
+            <button type="button" class="tag-chip" onclick="selectMood('Angry', 1, '😡')">
+              😡 Frustrated / Angry (Score: 1)
+            </button>
+          </div>
+
+          <!-- Mood Score Slider -->
+          <div class="score-slider-group">
+            <div class="score-slider-header">
+              <span>Mood Score:</span>
+              <span id="sliderScoreDisplay" style="color: var(--primary); font-size: 1.1rem; font-weight: 800;">3 / 5</span>
+            </div>
+            <input type="range" min="1" max="5" value="3" id="moodScoreSlider" class="slider-range" oninput="updateScoreFromSlider(this.value)" />
+            <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">
+              <span>1 - Struggling</span>
+              <span>2 - Low</span>
+              <span>3 - Okay</span>
+              <span>4 - Positive</span>
+              <span>5 - Thriving</span>
+            </div>
+          </div>
+
+          <!-- Note Input -->
+          <div class="form-group">
+            <label class="form-label">Add a short note (Optional)</label>
+            <textarea id="moodNoteInput" class="form-control" rows="3" placeholder='e.g. "Feeling stressed about college." or "Finished my project presentation today!"'></textarea>
+            
+            <div style="margin-top: 0.6rem;">
+              <span style="font-size: 0.75rem; color: var(--text-muted);">Quick tags:</span>
+              <div class="tags-cloud">
+                <span class="tag-chip" onclick="appendTag('#College')">#College</span>
+                <span class="tag-chip" onclick="appendTag('#Exams')">#Exams</span>
+                <span class="tag-chip" onclick="appendTag('#Assignments')">#Assignments</span>
+                <span class="tag-chip" onclick="appendTag('#Family')">#Family</span>
+                <span class="tag-chip" onclick="appendTag('#Friends')">#Friends</span>
+                <span class="tag-chip" onclick="appendTag('#Rest')">#Rest</span>
+                <span class="tag-chip" onclick="appendTag('#Productive')">#Productive</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button class="btn btn-primary btn-block btn-lg" onclick="saveMoodEntry()">
+            💾 Save Mood to Database
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 4. SIMPLE DAILY JOURNAL VIEW               -->
+    <!-- ========================================== -->
+    <section id="view-journal" class="view-section">
+      <div class="journal-container">
+        <!-- Journal Editor -->
+        <div class="card journal-editor-card">
+          <h3 style="margin-bottom: 0.75rem;">📔 Write a Journal Entry</h3>
+          
+          <div class="journal-prompts-banner">
+            <div>
+              <strong>Prompt: </strong>
+              <span id="journalPromptText">What is one thing that brought you a moment of comfort today?</span>
+            </div>
+            <button class="btn btn-sm btn-secondary" onclick="cycleJournalPrompt()" title="New Prompt">🎲</button>
+          </div>
+
+          <form id="journalForm" onsubmit="handleSaveJournal(event)">
+            <div class="form-group">
+              <label class="form-label">Title</label>
+              <input type="text" id="journalTitleInput" class="form-control" placeholder="e.g. Midterm Thoughts, Morning Reflection" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Your Reflection</label>
+              <textarea id="journalTextInput" class="form-control" rows="8" placeholder="Write whatever is on your heart and mind. Your thoughts are private and safe here..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">
+              💾 Save Journal Entry
+            </button>
+          </form>
+        </div>
+
+        <!-- Journal Entries History List -->
+        <div class="card journal-history-card">
+          <div class="card-header-flex">
+            <h3>📜 Previous Entries</h3>
+            <span id="journalCountBadge" class="mood-score-pill">0 Entries</span>
+          </div>
+
+          <div id="journalEntriesList">
+            <p style="color: var(--text-muted); font-size: 0.9rem;">No journal entries yet. Start by writing your first reflection on the left!</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 5. BASIC AI FRIEND CHAT VIEW               -->
+    <!-- ========================================== -->
+    <section id="view-chat" class="view-section">
+      <div class="chat-container">
+        <!-- Chat Header -->
+        <div class="chat-header">
+          <div class="chat-companion-info">
+            <div class="chat-avatar">🌸</div>
+            <div class="chat-status-text">
+              <h3>Bloom AI</h3>
+              <span><span class="status-dot"></span> Online & Supportive</span>
+            </div>
+          </div>
+          
+          <div style="display:flex; gap: 0.5rem;">
+            
+            <button class="btn btn-sm btn-secondary" onclick="clearChatHistory()" title="Clear Chat History">
+              🗑️ Clear Chat
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Chat Message Area -->
+        <div class="chat-messages" id="chatMessages">
+          <!-- Messages will be rendered here dynamically -->
+        </div>
+
+        <!-- Quick Starter Prompts -->
+        <div class="chat-suggestions">
+          <span class="suggestion-pill" onclick="sendQuickPrompt('I\'m feeling really stressed today about college.')">
+            😰 "I'm stressed about college"
+          </span>
+          <span class="suggestion-pill" onclick="sendQuickPrompt('Can you give me a journaling prompt?')">
+            ✨ "Give me a journal prompt"
+          </span>
+          <span class="suggestion-pill" onclick="sendQuickPrompt('I feel anxious and overwhelmed.')">
+            🌧️ "I feel overwhelmed"
+          </span>
+          <span class="suggestion-pill" onclick="sendQuickPrompt('I have some good news to share! 🎉')">
+            🎉 "I have good news!"
+          </span>
+          <span class="suggestion-pill" onclick="sendQuickPrompt('Can you guide me through a calming exercise?')">
+            🍃 "Calming exercise"
+          </span>
+        </div>
+
+        <!-- Message Input Bar -->
+        <form class="chat-input-bar" onsubmit="handleSendChat(event)">
+          <input type="text" id="chatInputField" class="form-control" placeholder="Talk to Bloom... (e.g. 'I'm feeling stressed today')" autocomplete="off" required />
+          <button type="submit" class="btn btn-primary" id="btnSendChat">
+            Send 💬
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 6. EMERGENCY HELP VIEW (🚨 SOS)            -->
+    <!-- ========================================== -->
+    <section id="view-emergency" class="view-section">
+      <div class="emergency-container">
+        <!-- Emergency Alert Banner -->
+        <div class="emergency-alert-banner">
+          <div class="emergency-alert-icon">🚨</div>
+          <div class="emergency-alert-text">
+            <h2>Emergency & Crisis Support</h2>
+            <p>If you or someone you know is in immediate crisis, support is available 24/7. You don't have to carry this alone.</p>
+          </div>
+        </div>
+
+        <div class="emergency-grid">
+          <!-- Saved Emergency Contacts -->
+          <div class="card">
+            <div class="card-header-flex">
+              <h3>📞 Saved Emergency Contacts</h3>
+              <button class="btn btn-sm btn-primary" onclick="openAddContactModal()">+ Add Contact</button>
+            </div>
+
+            <div class="contact-card-list" id="emergencyContactsList">
+              <!-- Contacts will be populated here -->
+            </div>
+          </div>
+
+          <!-- Calming Grounding Widget -->
+          <div class="card calm-widget-card">
+            <h3>🍃 Calming Breath (4-7-8)</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
+              Inhale 4s • Hold 7s • Exhale 8s
+            </p>
+
+            <div class="breathing-circle-wrapper">
+              <div class="breathing-circle" id="breathCircle">
+                <span id="breathText">Breathe</span>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 0.5rem;">
+              <button class="btn btn-primary btn-sm" id="btnBreathingToggle" onclick="toggleBreathing()">Start Exercise</button>
+            </div>
+
+            <div style="margin-top: 1.25rem; font-size: 0.8rem; color: var(--text-muted); text-align: left; background: var(--bg-muted); padding: 0.75rem; border-radius: var(--radius-sm); width: 100%;">
+              <strong>5-4-3-2-1 Sensory Grounding:</strong>
+              <div>• 5 things you can see</div>
+              <div>• 4 things you can physically feel</div>
+              <div>• 3 things you can hear</div>
+              <div>• 2 things you can smell</div>
+              <div>• 1 thing you can taste</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  
+    <!-- Analysis Results Modal -->
+    <div id="analysisModal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:2rem; border-radius:12px; z-index:1000; box-shadow:0 10px 40px rgba(0,0,0,0.3); max-width:500px; width:90%; max-height:80vh; overflow-y:auto;">
+        <h2 style="margin-bottom:1rem;">📊 Session Analysis</h2>
+        <div id="analysisContent"></div>
+        <button class="btn btn-primary" onclick="document.getElementById('analysisModal').style.display='none'" style="margin-top:1rem; width:100%;">Close</button>
+    </div>
+    <div id="analysisBackdrop" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999;" onclick="document.getElementById('analysisModal').style.display='none'"></div>
+    
+  </main>
+
+
+  <!-- ========================================== -->
+  <!-- MODAL: ADD EMERGENCY CONTACT              -->
+  <!-- ========================================== -->
+  <div class="modal-backdrop" id="addContactModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>Add Emergency Contact</h3>
+        <button class="modal-close" onclick="closeAddContactModal()">&times;</button>
+      </div>
+      <form onsubmit="handleSaveContact(event)">
+        <div class="form-group">
+          <label class="form-label">Contact Name</label>
+          <input type="text" id="contactNameInput" class="form-control" placeholder="e.g. Mom, Best Friend, Dr. Sharma" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <input type="tel" id="contactPhoneInput" class="form-control" placeholder="e.g. +1-555-0199 or 988" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Relationship / Note</label>
+          <input type="text" id="contactRelInput" class="form-control" placeholder="e.g. Family, Close Friend, Helpline" />
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem;">
+          <button type="button" class="btn btn-secondary" onclick="closeAddContactModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Contact</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: USER PROFILE                        -->
+  <!-- ========================================== -->
+  <div class="modal-backdrop" id="profileModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>User Profile</h3>
+        <button class="modal-close" onclick="closeProfileModal()">&times;</button>
+      </div>
+      <div style="text-align: center; margin-bottom: 1.25rem;">
+        <div class="user-avatar" style="width: 54px; height: 54px; font-size: 1.5rem; margin: 0 auto 0.5rem;" id="profileModalAvatar">A</div>
+        <h4 id="profileModalName">Alex Rivera</h4>
+        <p id="profileModalEmail" style="color: var(--text-muted); font-size: 0.85rem;">demo@mindbloom.com</p>
+      </div>
+
+      <div style="background-color: var(--bg-muted); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.25rem; font-size: 0.88rem;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+          <span style="color: var(--text-muted);">User ID:</span>
+          <strong id="profileUserId">#1</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+          <span style="color: var(--text-muted);">Total Mood Logs:</span>
+          <strong id="profileMoodCount">0</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+          <span style="color: var(--text-muted);">Journal Entries:</span>
+          <strong id="profileJournalCount">0</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--text-muted);">Member Since:</span>
+          <strong id="profileJoinedDate">Today</strong>
+        </div>
+      </div>
+
+      <button class="btn btn-outline-danger btn-block" onclick="logout()">
+        Log Out of Mind Bloom
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast Notification Hub -->
+  <div class="toast-container" id="toastHub"></div>
+
+  <!-- App Script -->
+  <script src="/app.js"></script>
+</body>
+</html>
